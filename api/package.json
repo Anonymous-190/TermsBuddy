@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "openai": "latest",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  }
+}
