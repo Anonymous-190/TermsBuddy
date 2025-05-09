@@ -2,11 +2,11 @@ import express from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import serverless from 'serverless-http';
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
 
 app.use(cors());
 app.use(express.json({ limit: '200mb' }));
@@ -16,7 +16,6 @@ const openai = new OpenAI({
   baseURL: 'https://models.github.ai/inference'
 });
 
-// Utility: Split large text into safe-size chunks (~12,000 chars ≈ 3000 tokens)
 function splitText(text, maxChunkSize = 12000) {
   const chunks = [];
   let i = 0;
@@ -55,9 +54,7 @@ Who it is shared with
 
 Retention period
 
-Any red flags (biometric, marketing sharing, arbitration, tracking, etc.)
-
-`
+Any red flags (biometric, marketing sharing, arbitration, tracking, etc.)`
           },
           { role: 'user', content: chunk }
         ],
@@ -68,13 +65,11 @@ Any red flags (biometric, marketing sharing, arbitration, tracking, etc.)
 
     const finalSummary = summaries.join('\n\n---\n\n');
     res.json({ result: finalSummary });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'AI model error: ' + err.message });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Backend running at http://localhost:${PORT}`);
-});
+// ✅ This is the required export for Vercel
+export const handler = serverless(app);
